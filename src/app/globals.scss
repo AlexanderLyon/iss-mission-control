@@ -1,8 +1,13 @@
-@import "tailwindcss";
+@use '@carbon/styles/scss/themes' as themes;
+@use '@carbon/styles/scss/theme' with (
+  $theme: themes.$g90
+);
+@use '@carbon/react/scss/components';
+@use 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
 }
 
 @theme inline {
@@ -23,4 +28,18 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+gmp-map-3d {
+  min-height: 300px;
+  height: 100%;
+  width: 100%;
+  background-color: lightgrey;
+  z-index: 1;
+}
+
+.Tile {
+  &__Map {
+    padding: 0;
+  }
 }

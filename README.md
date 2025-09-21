@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ISS Mission Control
+
+This is a simple Next.js app (bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app)) that displays the current location of the International Space Station (ISS) on an interactive 3D globe, along with basic information about the current crew aboard the ISS. The app fetches live data from public APIs and updates the ISS position every few seconds.
 
 ## Getting Started
 
@@ -18,19 +20,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Note that a valid Google Maps API key is required to display the map - see `.env.example` for details.
 
-## Learn More
+## Credits
 
-To learn more about Next.js, take a look at the following resources:
+This app uses open source data from:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- ["Where the ISS at?" API](https://wheretheiss.at/w/developer) - for live ISS location data and orbital specs.
+- [Open Notify API](http://open-notify.org/) - for current active crew data.

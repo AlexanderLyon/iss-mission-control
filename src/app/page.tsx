@@ -1,103 +1,75 @@
-import Image from "next/image";
+'use client';
+import { useState, useEffect, useRef } from 'react';
+import { Header, HeaderName } from '@carbon/react';
+import type { ISSPositionData } from '@/types/shared';
+import { Panel, MapPanel, CrewPanel, StatsPanel, ActionsPanel } from './panels';
+import type { MapPanelHandle } from './panels/map';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [issData, setIssData] = useState<ISSPositionData>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
+  const mapPanelRef = useRef<MapPanelHandle>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const fetchISSPosition = async (): Promise<void> => {
+    try {
+      const data = await fetch('api/iss/location');
+      const issData: ISSPositionData = await data.json();
+
+      if (data?.status !== 200 || !issData) {
+        throw new Error('Failed to load');
+      } else {
+        setIssData(issData);
+        setLastUpdated(new Date().toLocaleTimeString());
+      }
+    } catch (error) {
+      console.error('Error fetching ISS position:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (autoUpdate) {
+      fetchISSPosition();
+      const interval = setInterval(fetchISSPosition, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [autoUpdate]);
+
+  return (
+    <div className="font-mono items-center justify-items-center min-h-screen pt-20 pb-10 px-9 md:px-10 gap-16">
+      <Header>
+        <HeaderName href="#" prefix="" className="flex-shrink-0">
+          ISS Mission Control
+        </HeaderName>
+        <div className="ml-auto py-0 px-[1rem] text-[11px] text-right md:text-left md:text-xs">
+          {lastUpdated && <p>Last updated: {lastUpdated}</p>}
+        </div>
+      </Header>
+      <main className="flex flex-row flex-wrap gap-[32px] row-start-2 items-center sm:items-start w-full max-w-[1800px] relative">
+        {issData?.latitude && issData?.longitude && (
+          <p className="coordinates fixed left-[1rem] top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-270 origin-center z-50 px-2 whitespace-nowrap opacity-50 text-md">
+            {`${issData.latitude}, ${issData.longitude}`}
+          </p>
+        )}
+        <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-8 auto-rows-auto">
+          <Panel className="Tile__Map order-1 md:order-none">
+            <MapPanel ref={mapPanelRef} issData={issData} />
+          </Panel>
+          <Panel className="order-3 md:order-none">
+            <StatsPanel issData={issData} />
+          </Panel>
+          <Panel className="order-2 md:order-none">
+            <ActionsPanel
+              autoUpdate={autoUpdate}
+              toggleAutoUpdate={() => setAutoUpdate(!autoUpdate)}
+              centerISS={() => mapPanelRef.current?.centerISS()}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </Panel>
+          <Panel className="order-4 md:order-none">
+            <CrewPanel />
+          </Panel>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
