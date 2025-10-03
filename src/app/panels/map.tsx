@@ -52,7 +52,7 @@ export const MapPanel = forwardRef<MapPanelHandle, IMapPanelProps>(({ issData },
   const setMapMarker = async (latitude: number, longitude: number, altitudeKm: number) => {
     if (!mapRef.current || !('google' in window)) return;
 
-    const { PinElement } = (await window.google.maps.importLibrary(
+    const { PinElement, AdvancedMarkerElement } = (await window.google.maps.importLibrary(
       'marker'
     )) as google.maps.MarkerLibrary;
 
@@ -75,12 +75,23 @@ export const MapPanel = forwardRef<MapPanelHandle, IMapPanelProps>(({ issData },
       label: 'International Space Station',
     });
 
-    const glyphSvgPinElement = new PinElement({
-      background: 'white',
-      borderColor: '#0f62fe',
-      glyph: new URL(`${window.location.origin}/International_Space_Station.svg`),
-      scale: 6,
-    });
+    const glyphSvgPinElement =
+      typeof PinElement === 'function'
+        ? new PinElement({
+            background: 'white',
+            borderColor: '#0f62fe',
+            glyph: new URL(`${window.location.origin}/International_Space_Station.svg`),
+            scale: 6,
+          })
+        : new AdvancedMarkerElement({
+            content: (() => {
+              const img = document.createElement('img');
+              img.src = `${window.location.origin}/International_Space_Station.svg`;
+              img.style.width = '48px';
+              img.style.height = '48px';
+              return img;
+            })(),
+          });
 
     marker.append(glyphSvgPinElement);
     mapRef.current.append(marker);
