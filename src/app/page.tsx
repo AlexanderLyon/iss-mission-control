@@ -20,7 +20,11 @@ export default function Home() {
         throw new Error('Failed to load');
       } else {
         setIssData(issData);
-        setLastUpdated(new Date().toLocaleTimeString());
+        setLastUpdated(
+          new Date().toLocaleTimeString([], {
+            hourCycle: 'h24',
+          })
+        );
       }
     } catch (error) {
       console.error('Error fetching ISS position:', error);
