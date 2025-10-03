@@ -7,6 +7,7 @@ import type { MapPanelHandle } from './panels/map';
 
 export default function Home() {
   const [issData, setIssData] = useState<ISSPositionData>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string>();
   const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
   const mapPanelRef = useRef<MapPanelHandle>(null);
@@ -28,6 +29,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error fetching ISS position:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,17 +62,17 @@ export default function Home() {
           <Panel className="Tile__Map order-1 md:order-none">
             <MapPanel ref={mapPanelRef} issData={issData} />
           </Panel>
-          <Panel className="order-3 md:order-none">
+          <Panel isLoading={isLoading} className="order-3 md:order-none">
             <StatsPanel issData={issData} />
           </Panel>
-          <Panel className="order-2 md:order-none">
+          <Panel isLoading={isLoading} className="order-2 md:order-none">
             <ActionsPanel
               autoUpdate={autoUpdate}
               toggleAutoUpdate={() => setAutoUpdate(!autoUpdate)}
               centerISS={() => mapPanelRef.current?.centerISS()}
             />
           </Panel>
-          <Panel className="order-4 md:order-none">
+          <Panel isLoading={isLoading} className="order-4 md:order-none">
             <CrewPanel />
           </Panel>
         </div>
