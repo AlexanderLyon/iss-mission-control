@@ -31,10 +31,15 @@ export const ActionsPanel: React.FC<IActionsPanelProps> = ({
       </div>
       <hr className="my-4 border-[var(--cds-border-subtle)]" />
       <div className="flex flex-row flex-wrap gap-4">
-        <Button onClick={(e) => setIsModalOpen(true)} renderIcon={Video}>
+        <Button
+          className="flex-1 whitespace-nowrap"
+          onClick={(e) => setIsModalOpen(true)}
+          renderIcon={Video}
+        >
           Camera View
         </Button>
         <Button
+          className="flex-1 whitespace-nowrap"
           kind="secondary"
           href="https://www.nasa.gov/international-space-station/"
           target="_blank"

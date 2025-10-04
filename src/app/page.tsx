@@ -42,8 +42,18 @@ export default function Home() {
     }
   }, [autoUpdate]);
 
+  const CoordinatesLabel = ({ className }: { className?: string }) => {
+    if (!issData?.latitude || !issData?.longitude) return null;
+
+    return (
+      <p className={`whitespace-nowrap opacity-50 text-md ${className}`}>
+        {`${issData.latitude}, ${issData.longitude}`}
+      </p>
+    );
+  };
+
   return (
-    <div className="font-mono items-center justify-items-center min-h-screen pt-20 pb-10 px-9 md:px-10 gap-16">
+    <div className="font-mono items-center justify-items-center min-h-screen pt-20 pb-10 px-5 md:px-10 gap-16">
       <Header>
         <HeaderName href="#" prefix="" className="flex-shrink-0">
           ISS Mission Control
@@ -53,15 +63,14 @@ export default function Home() {
         </div>
       </Header>
       <main className="flex flex-row flex-wrap gap-[32px] row-start-2 items-center sm:items-start w-full max-w-[1800px] relative">
-        {issData?.latitude && issData?.longitude && (
-          <p className="coordinates fixed left-[1rem] top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-270 origin-center z-50 px-2 whitespace-nowrap opacity-50 text-md">
-            {`${issData.latitude}, ${issData.longitude}`}
-          </p>
-        )}
         <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-8 auto-rows-auto">
-          <Panel className="Tile__Map order-1 md:order-none">
-            <MapPanel ref={mapPanelRef} issData={issData} />
-          </Panel>
+          <div className="relative order-1 md:order-none">
+            <CoordinatesLabel className="hidden md:block absolute -left-[30px] -translate-x-full -rotate-90 origin-top-right z-50" />
+            <Panel className="Tile__Map w-full h-full">
+              <MapPanel ref={mapPanelRef} issData={issData} />
+            </Panel>
+            <CoordinatesLabel className="block md:hidden text-right text-xs px-0" />
+          </div>
           <Panel isLoading={isLoading} className="order-3 md:order-none">
             <StatsPanel issData={issData} />
           </Panel>

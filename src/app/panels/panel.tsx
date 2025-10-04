@@ -11,7 +11,7 @@ interface IPanelProps {
 
 export const Panel: React.FC<IPanelProps> = ({ children, isLoading, className }) => {
   const classes = [
-    'border-1 border-[var(--cds-border-subtle)]',
+    'clip-angled-corners border-1 border-[var(--cds-border-subtle)]',
     isLoading ? 'Panel__Loading' : '',
     className || '',
   ]
