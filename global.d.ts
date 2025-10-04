@@ -16,6 +16,12 @@ declare global {
           'min-altitude'?: string;
           defaultUIDisabled?: boolean;
         };
+        'gmp-marker-3d': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+          position: string;
+          'altitude-mode': string;
+          extruded?: string;
+          label?: string;
+        };
       }
     }
   }

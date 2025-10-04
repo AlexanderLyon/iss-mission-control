@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import Script from 'next/script';
-import type { ISSPositionData } from '@/types/shared';
+import type { ISSPositionData, GmpMap3DElement, GmpMarker3DElement } from '@/types/shared';
 
 interface IMapPanelProps {
   issData?: ISSPositionData;
@@ -15,8 +15,8 @@ export interface MapPanelHandle {
 
 export const MapPanel = forwardRef<MapPanelHandle, IMapPanelProps>(({ issData }, ref) => {
   const [inFreeLookMode, setInFreeLookMode] = useState(false);
-  const mapRef = useRef<GmpMap3DElement | null>(null);
-  const markerRef = useRef<HTMLElement | null>(null);
+  const mapRef = useRef<GmpMap3DElement>(null);
+  const markerRef = useRef<GmpMarker3DElement>(null);
 
   const centerISS = useCallback(() => {
     if (!issData || !mapRef.current) return;
@@ -31,52 +31,34 @@ export const MapPanel = forwardRef<MapPanelHandle, IMapPanelProps>(({ issData },
   useImperativeHandle(ref, () => ({ centerISS }), [centerISS]);
 
   const setMapMarker = async (latitude: number, longitude: number, altitudeKm: number) => {
-    if (!mapRef.current || !('google' in window)) return;
+    if (!mapRef.current || !markerRef.current || !('google' in window)) return;
 
     const { PinElement, AdvancedMarkerElement } = (await window.google.maps.importLibrary(
       'marker'
     )) as google.maps.MarkerLibrary;
 
-    const { Marker3DElement } = (await window.google.maps.importLibrary(
-      'maps3d'
-    )) as Maps3DLibraryWithMarker;
+    markerRef.current.position = { lat: latitude, lng: longitude, altitude: altitudeKm * 1000 }; // altitude in meters
 
-    if (!Marker3DElement) return;
-
-    // Remove previous marker if present:
-    if (markerRef.current) {
-      markerRef.current.remove();
-      markerRef.current = null;
-    }
-
-    const marker = new Marker3DElement({
-      position: { lat: latitude, lng: longitude, altitude: altitudeKm * 1000 }, // altitude in meters
-      altitudeMode: 'ABSOLUTE',
-      extruded: true,
-      label: 'International Space Station',
-    });
-
-    const glyphSvgPinElement =
+    const markerContent =
       typeof PinElement === 'function'
         ? new PinElement({
             background: 'white',
             borderColor: '#0f62fe',
-            glyph: new URL(`${window.location.origin}/International_Space_Station.svg`),
+            glyph: new URL(`${window.location.origin}/International_Space_Station.png`),
             scale: 6,
           })
         : new AdvancedMarkerElement({
             content: (() => {
               const img = document.createElement('img');
-              img.src = `${window.location.origin}/International_Space_Station.svg`;
+              img.src = `${window.location.origin}/International_Space_Station.png`;
+              img.alt = 'International Space Station';
               img.style.width = '48px';
               img.style.height = '48px';
               return img;
             })(),
-          });
+          }).element;
 
-    marker.append(glyphSvgPinElement);
-    mapRef.current.append(marker);
-    markerRef.current = marker;
+    markerRef.current.replaceChildren(markerContent);
   };
 
   useEffect(() => {
@@ -112,7 +94,15 @@ export const MapPanel = forwardRef<MapPanelHandle, IMapPanelProps>(({ issData },
         heading="0"
         min-altitude="30000"
         defaultUIDisabled
-      ></gmp-map-3d>
+      >
+        <gmp-marker-3d
+          ref={markerRef}
+          position=""
+          altitude-mode="absolute"
+          extruded="true"
+          label="International Space Station"
+        ></gmp-marker-3d>
+      </gmp-map-3d>
       <Script
         strategy="beforeInteractive"
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&v=beta&libraries=maps3d`}

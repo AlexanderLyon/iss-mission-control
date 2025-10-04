@@ -28,6 +28,13 @@ export interface GmpMap3DElement extends HTMLElement {
   heading?: string;
 }
 
+export interface GmpMarker3DElement extends HTMLElement {
+  position: { lat: number; lng: number; altitude: number };
+  altitudeMode: 'ABSOLUTE' | string;
+  extruded?: boolean;
+  label?: string;
+}
+
 export interface Marker3DElementOptions {
   position: { lat: number; lng: number; altitude: number };
   altitudeMode: 'ABSOLUTE' | string;
