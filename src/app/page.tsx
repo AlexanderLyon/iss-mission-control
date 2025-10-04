@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Header, HeaderName } from '@carbon/react';
+import { Header, HeaderName, Modal } from '@carbon/react';
 import type { ISSPositionData } from '@/types/shared';
 import { Panel, MapPanel, CrewPanel, StatsPanel, ActionsPanel } from './panels';
 import type { MapPanelHandle } from './panels/map';
@@ -10,6 +10,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string>();
   const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
+  const [cameraViewOpen, setCameraViewOpen] = useState<boolean>(false);
   const mapPanelRef = useRef<MapPanelHandle>(null);
 
   const fetchISSPosition = async (): Promise<void> => {
@@ -78,6 +79,7 @@ export default function Home() {
             <ActionsPanel
               autoUpdate={autoUpdate}
               toggleAutoUpdate={() => setAutoUpdate(!autoUpdate)}
+              openCameraView={() => setCameraViewOpen(true)}
               centerISS={() => mapPanelRef.current?.centerISS()}
             />
           </Panel>
@@ -85,6 +87,26 @@ export default function Home() {
             <CrewPanel />
           </Panel>
         </div>
+        <Modal
+          open={cameraViewOpen}
+          passiveModal
+          className="z-50"
+          modalHeading="Camera View"
+          primaryButtonText="Close"
+          onRequestClose={() => setCameraViewOpen(false)}
+          preventCloseOnClickOutside={false}
+        >
+          <iframe
+            width="100%"
+            height="315"
+            src="https://www.youtube-nocookie.com/embed/yf5cEJULZXk?si=BlRgzeNiRCl245Vj&autoplay=1"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          ></iframe>
+        </Modal>
       </main>
     </div>
   );
