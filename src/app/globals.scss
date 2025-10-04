@@ -30,6 +30,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+body,
+button {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 @layer utilities {
   .clip-angled-corners {
     clip-path: polygon(

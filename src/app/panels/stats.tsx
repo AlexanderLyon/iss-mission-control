@@ -43,7 +43,7 @@ export const StatsPanel: React.FC<IStatsPanelProps> = ({ issData }) => {
         </TableRow>
         <TableRow>
           <TableCell className="uppercase font-bold">Sunlight</TableCell>
-          <TableCell className="capitalize">{issData.visibility}</TableCell>
+          <TableCell>{issData.visibility}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="uppercase font-bold">Visibility</TableCell>
