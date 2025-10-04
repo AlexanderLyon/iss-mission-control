@@ -19,3 +19,22 @@ export interface CrewData {
   message: string;
   number: number;
 }
+
+export interface GmpMap3DElement extends HTMLElement {
+  center?: { lat: number; lng: number; altitude: number } | null;
+  mode?: string;
+  range?: string;
+  tilt?: string;
+  heading?: string;
+}
+
+export interface Marker3DElementOptions {
+  position: { lat: number; lng: number; altitude: number };
+  altitudeMode: 'ABSOLUTE' | string;
+  extruded?: boolean;
+  label?: string;
+}
+
+export type Maps3DLibraryWithMarker = google.maps.Maps3DLibrary & {
+  Marker3DElement: new (options: Marker3DElementOptions) => HTMLElement;
+};
